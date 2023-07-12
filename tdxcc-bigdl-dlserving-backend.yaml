@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: torchserve-backend-tdx-coco
+spec:
+  runtimeClassName: kata-qemu-tdx
+  containers:
+  - name: torchserve-backend
+    image: intelanalytics/bigdl-ppml-trusted-dl-serving-gramine-ref:multipods-8G
+    imagePullPolicy: Always
+    resources:
+      limits:
+        cpu: "48"
+        memory: "64Gi"
+      requests:
+        cpu: "48"
+        memory: "64Gi"
+    command: ["/bin/sleep", "3650d"]
+    volumeMounts:
+    - name: kubeconfig
+      mountPath: /root/.kube/config
+    - name: model-store
+      mountPath: /ppml/model
+    - name: benchmark-kit
+      mountPath: /ppml/benchmark-kit
+    - name: tmp
+      mountPath: /tmp
+    env:
+    - name: JAVA_HOME
+      value: /opt/jdk
+  volumes:
+  - name: benchmark-kit
+    hostPath:
+      path: /path/to/benchmark/kit
+  - name: model-store
+    hostPath:
+      path: /path/to/model/store
+  - name: kubeconfig
+    hostPath: 
+      path: /root/.kube/config
+  - name: tmp
+    hostPath:
+      path: /tmp
+
